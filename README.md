@@ -13,14 +13,16 @@ runs on my Linux computer at home and organizes the process.
 ## Solution
 
 _I did this a while ago, so let me know if you find the procedure does not
-work for you_
+work for you!_
+
+Modify the attached `run.sh` to contain variables for your situation
 
 Get [getssl](https://github.com/srvrco/getssl) to communicate with Let's
 Encrypt.
 
 Call `./getssl -w . -c yourdomain.com` to set up
 
-Modify the attached `run.sh` to contain variables for your situation
+### Modify `yourdomain.com/getssl.cfg`
 
 Modify the file `yourdomain.com/getssl.cfg` that has been created in the last
 step.
@@ -61,6 +63,8 @@ use the attached Perl Program to upload the certificates to the server
     
     RELOAD_CMD="upload_to_kis"
     
+
+### Run it
 
 If all goes right, you just need to enter the directory and call `./run.sh`.
 

@@ -4,6 +4,7 @@ use strict;
 use WWW::Curl;
 use WWW::Curl::Form;
 use WWW::Curl::Easy qw();
+use URI::Escape;
 
 # Login 
 #my $kdnummer='176111';
@@ -20,12 +21,16 @@ $post_data->formadd("submode", 'sslfileupload');
 #$post_data->formadd("", '');
 
 #$post_data->formaddfile('mklemme.de.crt', "certfile", "application/pkix-cert");
-$post_data->formaddfile('domainchain.crt', "certfile", "application/pkix-cert");
+$post_data->formaddfile($ENV{"KIS_DOMAIN"}.'/domainchain.crt', "certfile", "application/pkix-cert");
 $post_data->formaddfile('mklemme.de.key', "keyfile", "application/pkix-cert");
 
 my $curl = WWW::Curl::Easy->new;
-$curl->setopt(WWW::Curl::Easy::CURLOPT_URL(), 
-              "https://kis.hosteurope.de/administration/webhosting/admin.php?kdnummer=$kdnummer&passwd=$passwd");
+my $url="https://kis.hosteurope.de/administration/webhosting/admin.php?kdnummer=".
+         uri_escape($kdnummer, { encode_reserved => 1 }) .
+         "&passwd=" .
+         uri_escape($passwd, { encode_reserved => 1 }); 
+#print "$url\n";
+$curl->setopt(WWW::Curl::Easy::CURLOPT_URL(), $url);
 
 my ($response_body,$response_header);
 $curl->setopt(WWW::Curl::Easy::CURLOPT_WRITEDATA(),\$response_body);
