@@ -52,7 +52,7 @@ DOMAIN_CHAIN_LOCATION="domainchain.crt" # this is the domain cert and CA cert
 	<p>
 	use the attached Perl Program to upload the certificates to the server    </p>	
 	<pre>
-RELOAD_CMD="upload_to_kis"
+RELOAD_CMD="upload_to_kis.pl"
 </pre>
 
 	
@@ -61,7 +61,7 @@ RELOAD_CMD="upload_to_kis"
 
 <p>If all goes right, you just need to enter the directory and call <code>./run.sh</code>.</p>
 <p>This can also be done as a cron job:<br/>
-<code>23 5   *    *   *       cd Programme/getssl;  ./run >> log</code>
+<code>23 5   *    *   *       cd xxxxxx;  ./run.sh >> log</code>
 </p>
 <p><b>Let me know if this works out for you!</b></p>
 </body>

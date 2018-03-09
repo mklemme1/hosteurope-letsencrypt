@@ -7,7 +7,6 @@ use WWW::Curl::Easy qw();
 use URI::Escape;
 
 # Login 
-#my $kdnummer='176111';
 my $kdnummer=$ENV{"KIS_KDNUMMER"};
 my $passwd=$ENV{"KIS_PASSWD"};
 my $wp_id=$ENV{"KIS_WP_ID"};
@@ -18,18 +17,25 @@ $post_data->formadd("menu", '6');
 $post_data->formadd("mode", 'sslupload');
 $post_data->formadd("wp_id", $wp_id);
 $post_data->formadd("submode", 'sslfileupload');
-#$post_data->formadd("", '');
 
-#$post_data->formaddfile('mklemme.de.crt', "certfile", "application/pkix-cert");
-$post_data->formaddfile($ENV{"KIS_DOMAIN"}.'/domainchain.crt', "certfile", "application/pkix-cert");
-$post_data->formaddfile('mklemme.de.key', "keyfile", "application/pkix-cert");
+my $certfile=$ENV{"KIS_DOMAIN"}.'/domainchain.crt';
+die ("$certfile not found") 
+    unless  (-f $certfile);
+$post_data->formaddfile($certfile,
+                        "certfile", "application/pkix-cert");
+
+my $keyfile=$ENV{"KIS_DOMAIN"}."/".$ENV{"KIS_DOMAIN"}.".key";
+die ("$keyfile not found") 
+    unless  (-f $keyfile);
+$post_data->formaddfile($keyfile,
+                        "keyfile", "application/pkix-cert");
 
 my $curl = WWW::Curl::Easy->new;
-my $url="https://kis.hosteurope.de/administration/webhosting/admin.php?kdnummer=".
-         uri_escape($kdnummer, { encode_reserved => 1 }) .
-         "&passwd=" .
-         uri_escape($passwd, { encode_reserved => 1 }); 
-#print "$url\n";
+my $url=
+    "https://kis.hosteurope.de/administration/webhosting/admin.php?kdnummer=".
+    uri_escape($kdnummer, { encode_reserved => 1 }) .
+    "&passwd=" .
+    uri_escape($passwd, { encode_reserved => 1 }); 
 $curl->setopt(WWW::Curl::Easy::CURLOPT_URL(), $url);
 
 my ($response_body,$response_header);
@@ -48,10 +54,6 @@ my $response_code = $curl->getinfo(WWW::Curl::Easy::CURLINFO_HTTP_CODE());
 if($response_code != 200) {
     die "unerwarteter HTTP Antwort-Code $response_code: $response_body";
 }
-open (PAGE, '>/tmp/page.html') || die $!;
-print PAGE "response_header: $response_header\n";
-print PAGE $response_body;
-close PAGE;
 
 unless ($response_body =~ /Die Dateien wurden erfolgreich hochgeladen./gis) {
     die "Upload nicht erfolgreich";

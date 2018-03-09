@@ -61,7 +61,7 @@ use the attached Perl Program to upload the certificates to the server
 
     
     
-    RELOAD_CMD="upload_to_kis"
+    RELOAD_CMD="upload_to_kis.pl"
     
 
 ### Run it
@@ -69,7 +69,7 @@ use the attached Perl Program to upload the certificates to the server
 If all goes right, you just need to enter the directory and call `./run.sh`.
 
 This can also be done as a cron job:  
-`23 5 * * * cd Programme/getssl; ./run >> log`
+`23 5 * * * cd xxxxxx; ./run.sh >> log`
 
 **Let me know if this works out for you!**
 
