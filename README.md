@@ -7,7 +7,7 @@ Automatically use Let's Encrypt certificates with a HostEurope WebPack
 I have a WebPack hosting package at [HostEurope](https://www.hosteurope.de/).
 They allow uploading certificates like the ones from [Let's
 Encrypt](https://letsencrypt.org/), but there is no automation for the Let's
-Encrypt renuwal. I have now created a script that automates the process. It
+Encrypt renewal. I have now created a script that automates the process. It
 runs on my Linux computer at home and organizes the process.
 
 ## Solution
