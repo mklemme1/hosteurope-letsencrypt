@@ -56,7 +56,7 @@ if($response_code != 200) {
 }
 
 unless ($response_body =~ /Die Dateien wurden erfolgreich hochgeladen./gis) {
-    die "Upload nicht erfolgreich";
+    die "Upload nicht erfolgreich:\n$response_body\n";
 }
 
 #end
