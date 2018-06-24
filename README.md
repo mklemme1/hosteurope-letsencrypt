@@ -71,5 +71,13 @@ If all goes right, you just need to enter the directory and call `./run.sh`.
 This can also be done as a cron job:  
 `23 5 * * * cd xxxxxx; ./run.sh >> log`
 
+### Debugging
+
+#### Check if you can log into KIS with the credentials
+Open this URL in your browser
+`https://kis.hosteurope.de/administration/webhosting/admin.php?kdnummer=XXX&passwd=YYY`
+
+`KIS_KDNUMMER` is not the Customer Number, as the name suggests, but the login name to KIS
+
 **Let me know if this works out for you!**
 

@@ -6,7 +6,7 @@ date
 ######## Configuration
 # Password to HostEurope's admin website KIS
 export KIS_PASSWD=''
-# login name for KIS
+# login name for KIS, not customer number!
 export KIS_KDNUMMER=''
 # WebPack ID
 export KIS_WP_ID=''
