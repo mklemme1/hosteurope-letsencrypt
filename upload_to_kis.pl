@@ -43,6 +43,7 @@ $curl->setopt(WWW::Curl::Easy::CURLOPT_WRITEDATA(),\$response_body);
 $curl->setopt(WWW::Curl::Easy::CURLOPT_WRITEHEADER(), \$response_header);
 $curl->setopt(WWW::Curl::Easy::CURLOPT_HTTPPOST(), $post_data);
 $curl->setopt(WWW::Curl::Easy::CURLOPT_ENCODING() ,"UTF-8");
+$curl->setopt(CURLOPT_FOLLOWLOCATION, 1);
 
 my $retcode = $curl->perform;
 unless  ($retcode == 0) {
