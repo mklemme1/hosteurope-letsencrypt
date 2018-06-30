@@ -10,9 +10,11 @@ use URI::Escape;
 my $kdnummer=$ENV{"KIS_KDNUMMER"};
 my $passwd=$ENV{"KIS_PASSWD"};
 my $wp_id=$ENV{"KIS_WP_ID"};
+my $v_id=$ENV{"KIS_V_ID"};
+
 
 my $post_data = WWW::Curl::Form->new;
-$post_data->formadd("v_id", '0');  # use different ID for specific web site
+$post_data->formadd("v_id", $v_id);  
 $post_data->formadd("menu", '6');
 $post_data->formadd("mode", 'sslupload');
 $post_data->formadd("wp_id", $wp_id);
@@ -43,7 +45,7 @@ $curl->setopt(WWW::Curl::Easy::CURLOPT_WRITEDATA(),\$response_body);
 $curl->setopt(WWW::Curl::Easy::CURLOPT_WRITEHEADER(), \$response_header);
 $curl->setopt(WWW::Curl::Easy::CURLOPT_HTTPPOST(), $post_data);
 $curl->setopt(WWW::Curl::Easy::CURLOPT_ENCODING() ,"UTF-8");
-$curl->setopt(CURLOPT_FOLLOWLOCATION, 1);
+#$curl->setopt(WWW::Curl::Easy::CURLOPT_FOLLOWLOCATION, 1);
 
 my $retcode = $curl->perform;
 unless  ($retcode == 0) {
