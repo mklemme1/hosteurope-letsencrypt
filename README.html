@@ -15,7 +15,7 @@ runs on my Linux computer at home and organizes the process.</p>
 <p><em>I did this a while ago, so let me know if you find the procedure does not
 work for you!</em></p>
 
-<p>Modify the attached <code>run.sh</code> to contain variables for your situation</p>
+<p>Modify the attached <code>run.sh</code> to contain variables for your situation. Set its permissions to 700 to protect your passwords: <code>chmod 700 run.sh</code></p>
 
 <p>Get <a href="https://github.com/srvrco/getssl">getssl</a> to communicate with Let's
 Encrypt.</p>
@@ -53,7 +53,7 @@ CA_CERT_LOCATION="chain.crt"
 DOMAIN_CHAIN_LOCATION="domainchain.crt" # this is the domain cert and CA cert
 </code></pre>
 
-<p>use the attached Perl Program to upload the certificates to the server</p>
+<p>Use the attached Perl Program to upload the certificates to the server</p>
 
 <pre><code>RELOAD_CMD="upload_to_kis.pl"
 </code></pre>
@@ -62,8 +62,10 @@ DOMAIN_CHAIN_LOCATION="domainchain.crt" # this is the domain cert and CA cert
 
 <p>If all goes right, you just need to enter the directory and call <code>./run.sh</code>.</p>
 
-<p>This can also be done as a cron job: <br />
-<code>23 5 * * * cd xxxxxx; ./run.sh &gt;&gt; log</code></p>
+<p>This can also be done as a cron job:</p>
+
+<pre><code> 23 5 * * * cd xxxxxx; ./run.sh &gt;&gt; log
+</code></pre>
 
 <h3>Debugging</h3>
 

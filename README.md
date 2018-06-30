@@ -15,7 +15,7 @@ runs on my Linux computer at home and organizes the process.
 _I did this a while ago, so let me know if you find the procedure does not
 work for you!_
 
-Modify the attached `run.sh` to contain variables for your situation
+Modify the attached `run.sh` to contain variables for your situation. Set its permissions to 700 to protect your passwords: `chmod 700 run.sh`
 
 Get [getssl](https://github.com/srvrco/getssl) to communicate with Let's
 Encrypt.
@@ -37,8 +37,6 @@ In each web domain, create the directory `.well-known/acme-challenge`
 
 For the base domain, and each additional domain, create a line in `ACL`. Add
 the path to the domain's `.well-known/acme-challenge` as last parameter.
-
-    
     
     ACL=(
     "ftp:${FTP_USER}:${FTP_PASSWD}:${DOMAIN}:www/.well-known/acme-challenge"
@@ -48,17 +46,13 @@ the path to the domain's `.well-known/acme-challenge` as last parameter.
     )
 
 Store the produced certificates in the current folder
-
-    
     
     DOMAIN_CERT_LOCATION="${KIS_DOMAIN}.crt"
     DOMAIN_KEY_LOCATION="${KIS_DOMAIN}.key"	
     CA_CERT_LOCATION="chain.crt"
     DOMAIN_CHAIN_LOCATION="domainchain.crt" # this is the domain cert and CA cert
     
-
-use the attached Perl Program to upload the certificates to the server
-
+Use the attached Perl Program to upload the certificates to the server
     
     
     RELOAD_CMD="upload_to_kis.pl"
@@ -68,8 +62,9 @@ use the attached Perl Program to upload the certificates to the server
 
 If all goes right, you just need to enter the directory and call `./run.sh`.
 
-This can also be done as a cron job:  
-`23 5 * * * cd xxxxxx; ./run.sh >> log`
+This can also be done as a cron job:
+
+     23 5 * * * cd xxxxxx; ./run.sh >> log
 
 ### Debugging
 
