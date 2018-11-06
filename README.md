@@ -2,9 +2,7 @@
 
 Automatically use Let's Encrypt certificates with a HostEurope WebPack
 
-> **HostEurope has closed down the interface to automatically upload certificates.
-> There is currently no alternative known for this.
-> Please let me know if you found a new interface.**
+> The program now makes use of HostEurope's new login mechanism
 
 
 ## Situation

@@ -1,65 +1,77 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 use strict;
-use WWW::Curl;
-use WWW::Curl::Form;
-use WWW::Curl::Easy qw();
-use URI::Escape;
+use WWW::Mechanize ();
+use Data::Dumper;
 
-# Login 
+### Login-Daten  
 my $kdnummer=$ENV{"KIS_KDNUMMER"};
 my $passwd=$ENV{"KIS_PASSWD"};
 my $wp_id=$ENV{"KIS_WP_ID"};
 my $v_id=$ENV{"KIS_V_ID"};
 
 
-my $post_data = WWW::Curl::Form->new;
-$post_data->formadd("v_id", $v_id);  
-$post_data->formadd("menu", '6');
-$post_data->formadd("mode", 'sslupload');
-$post_data->formadd("wp_id", $wp_id);
-$post_data->formadd("submode", 'sslfileupload');
+my $mech = WWW::Mechanize->new(
+	cookie_jar => {},
+	autocheck => 1,
+	protocols_allowed => [ 'http', 'https' ],
+#	verbose_forms => 1, 
+	);
+$mech->agent_alias( 'Windows Mozilla' );
 
+### Login
+## Hole Startseite für Cookies
+$mech->get("https://kis.hosteurope.de/administration/webhosting/admin.php");
+$mech->get('https://sso.hosteurope.de/?app=kis&path=%2F');
+
+## POST der Login-Daten
+$mech->add_header("Content-Type" => "application/json");
+$mech->post('https://sso.hosteurope.de/api/app/v1/login',
+	content=> 
+	'{"brandId":"b9c8f0f0-60dd-4cab-9da8-512b352d9c1a","locale":"de-DE","identifier":"'.
+	$kdnummer.'","password":"'.$passwd.'"}');
+
+my $content= $mech->content;
+die "Authentifizierung nicht erfolgreich: $content"
+  unless ($content =~ m|"success":true}|) ;
+
+$mech->delete_header("Content-Type" );
+$mech->get('https://sso.hosteurope.de/api/app/v1/redirectUrl?brandId=b9c8f0f0-60dd-4cab-9da8-512b352d9c1a&app=kis&path=%2F');
+
+### Upload
+## Formular holen
+$mech->get('https://kis.hosteurope.de/administration/webhosting/admin.php?menu=6&wp_id='.$wp_id.'&mode=sslupload');
+
+## Formular ausfüllen
 my $certfile=$ENV{"KIS_DOMAIN"}.'/domainchain.crt';
 die ("$certfile not found") 
     unless  (-f $certfile);
-$post_data->formaddfile($certfile,
-                        "certfile", "application/pkix-cert");
-
 my $keyfile=$ENV{"KIS_DOMAIN"}."/".$ENV{"KIS_DOMAIN"}.".key";
 die ("$keyfile not found") 
     unless  (-f $keyfile);
-$post_data->formaddfile($keyfile,
-                        "keyfile", "application/pkix-cert");
 
-my $curl = WWW::Curl::Easy->new;
-my $url=
-    "https://kis.hosteurope.de/administration/webhosting/admin.php?kdnummer=".
-    uri_escape($kdnummer, { encode_reserved => 1 }) .
-    "&passwd=" .
-    uri_escape($passwd, { encode_reserved => 1 }); 
-$curl->setopt(WWW::Curl::Easy::CURLOPT_URL(), $url);
+$mech->form_with_fields(("keyfile")) || die $!;
+$mech->field("v_id"=> $v_id);  
+$mech->field("menu"=> '6');
+$mech->field("mode"=> 'sslupload');
+$mech->field("wp_id"=> $wp_id);
+$mech->field("submode"=> 'sslfileupload');
+$mech->field("certfile"=>  $certfile);
+$mech->field("keyfile"=>  $keyfile);
 
-my ($response_body,$response_header);
-$curl->setopt(WWW::Curl::Easy::CURLOPT_WRITEDATA(),\$response_body);
-$curl->setopt(WWW::Curl::Easy::CURLOPT_WRITEHEADER(), \$response_header);
-$curl->setopt(WWW::Curl::Easy::CURLOPT_HTTPPOST(), $post_data);
-$curl->setopt(WWW::Curl::Easy::CURLOPT_ENCODING() ,"UTF-8");
-#$curl->setopt(WWW::Curl::Easy::CURLOPT_FOLLOWLOCATION, 1);
+$mech->submit();
+die "konne Formular nicht senden" unless ($mech->success);
 
-my $retcode = $curl->perform;
-unless  ($retcode == 0) {
-    die ("An error happened: $retcode ".$curl->strerror($retcode)." ".
-         $curl->errbuf."\n");
-}
-    
-my $response_code = $curl->getinfo(WWW::Curl::Easy::CURLINFO_HTTP_CODE());
-if($response_code != 200) {
-    die "unerwarteter HTTP Antwort-Code $response_code: $response_body";
-}
 
-unless ($response_body =~ /Die Dateien wurden erfolgreich hochgeladen./gis) {
-    die "Upload nicht erfolgreich:\n$response_body\n";
-}
+$content=$mech->content;
+die ("Upload nicht erfolgreich") 
+	unless ($content =~ m|Die Dateien wurden erfolgreich hochgeladen.|);
+
+#print $mech->content. "\n---\n";
+open (OUT, ">/tmp/page.html"); 
+print OUT $mech->content;
+close OUT;
+#$mech->dump_headers();
+#exit;
 
 #end
