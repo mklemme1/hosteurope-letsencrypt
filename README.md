@@ -2,7 +2,7 @@
 
 Automatically use Let's Encrypt certificates with a HostEurope WebPack
 
-> The program now makes use of HostEurope's new login mechanism
+> HostEurope has now changed the login mechanism again, this program cannot upload any more
 
 
 ## Situation
